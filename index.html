@@ -1249,7 +1249,7 @@ const allQuestions = [
    {id:'R4', text:'4. Сведения о значениях эксплуатационных нагрузок на строительные конструкции, которые недопустимо превышать'},
    {id:'R5', text:'5. Описание мероприятий, обеспечивающих защиту помещений от шума, вибрации и другого воздействия'},
  ],
- correct:{'LA':'R2','LB':'R2','LC':'R1','LD':'R5','LE':'R4','LF':'R3'}},
+ correct:{'LA':'R2','LB':null,'LC':'R1','LD':'R5','LE':'R4','LF':'R3'}},
 
 ]; // end allQuestions
 
@@ -1592,7 +1592,7 @@ function removeFromZone(leftId) {
 
 function checkMatch() {
   const q = questions[current];
-  const allFilled = q.left.every(l => matchPlacements[l.id] !== null);
+  const allFilled = q.left.every(l => q.correct[l.id] === null || matchPlacements[l.id] !== null);
   if (!allFilled) {
     document.getElementById('feedback-area').innerHTML = '<div class="feedback-text err">Заполните все поля</div>';
     return;
@@ -1611,9 +1611,9 @@ function checkMatch() {
   const isFullyCorrect = correctCount === q.left.length;
   if (isFullyCorrect) score++;
   const correctLines = q.left.map(l => {
-    const rightItem = q.right.find(r => r.id === q.correct[l.id]);
+    const rightItem = q.correct[l.id] === null ? null : q.right.find(r => r.id === q.correct[l.id]);
     const shortLeft = l.text.length > 35 ? l.text.substring(0,35) + '…' : l.text;
-    return shortLeft + ' &rarr; ' + (rightItem ? rightItem.text : '');
+    return shortLeft + ' &rarr; ' + (rightItem ? rightItem.text : '(оставить пустым)');
   }).join('<br>');
   const btnLabel = current < questions.length - 1 ? 'Далее →' : 'Завершить';
   const fb = document.getElementById('feedback-area');
